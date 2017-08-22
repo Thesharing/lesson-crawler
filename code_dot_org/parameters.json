@@ -1,0 +1,201 @@
+{
+    /* dashboard/app/models/levels/blockly.rb -> blockly_app_options
+    ** called by 
+    ** apps/helpers/level-helpers.rb -> blockly_options
+    */
+
+    // database.games.name, not necessary
+    "levelGameName": "CustomMaze",
+    // level_file.proprties.skin / database.levels
+    "skinId": "birds",
+    // Blockly.base_url
+    "baseUrl": "/blockly/",
+    // database.games.app, not necessary
+    "app": "maze",
+    // database.games.(try:uses_droplet?), not necessary
+    "droplet": false,
+    // Rails.configuration.pretty_apps ? "" : ".min", not necessary
+    "pretty": ".min",
+    
+    "level": {
+
+        // level_file.properties | database.levels.properties
+        "toolbox": "\u003cxml\u003e\u003cblock type=\"maze_moveForward\"/\u003e\u003cblock type=\"maze_turn\"\u003e\u003ctitle name=\"DIR\"\u003eturnLeft\u003c/title\u003e\u003c/block\u003e\u003cblock type=\"maze_turn\"\u003e\u003ctitle name=\"DIR\"\u003eturnRight\u003c/title\u003e\u003c/block\u003e\u003c/xml\u003e",
+        // level_file.properties | database.levels.properties
+        "levelBuilderRecommendedBlocks": "\u003cxml\u003e\u003cblock type=\"maze_moveForward\"/\u003e\u003cblock type=\"maze_turn\"\u003e\u003ctitle name=\"DIR\"\u003eturnRight\u003c/title\u003e\u003c/block\u003e\u003c/xml\u003e",
+        // level_file.properties | database.levels.properties
+        "solutionBlocks": "\u003cxml\u003e\u003cblock type=\"when_run\" deletable=\"false\" movable=\"false\"\u003e\u003cnext\u003e\u003cblock type=\"maze_moveForward\"\u003e\u003cnext\u003e\u003cblock type=\"maze_moveForward\"\u003e\u003cnext\u003e\u003cblock type=\"maze_turn\"\u003e\u003ctitle name=\"DIR\"\u003eturnRight\u003c/title\u003e\u003cnext\u003e\u003cblock type=\"maze_moveForward\"/\u003e\u003c/next\u003e\u003c/block\u003e\u003c/next\u003e\u003c/block\u003e\u003c/next\u003e\u003c/block\u003e\u003c/next\u003e\u003c/block\u003e\u003c/xml\u003e",
+        // level_file.properties | database.levels.properties
+        "map":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,2,1,1,4,0],[0,0,0,0,0,3,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]],
+        // level_file.properties | database.levels.properties
+        "skin": "birds",
+        // level_file.properties | database.levels.properties
+        "instructions": "沿着这条路带我去找那只笨猪。躲开 TNT 炸药，不然我的羽毛就要被炸飞了！",
+        // level_file.properties | database.levels.properties
+        "startDirection": 1, 
+        // level_file.properties | database.levels.properties
+        "stepMode": 1, 
+        // level_file.properties | database.levels.properties
+        "isK1": false, 
+        // level_file.properties | database.levels.properties
+        "skipInstructionsPopup": false, 
+        // level_file.properties | database.levels.properties
+        "ideal": 5, 
+        // level_file.properties | database.levels.properties
+        "neverAutoplayVideo": false, 
+        // level_file.properties | database.levels.properties
+        "disableParamEditing": true, 
+        // level_file.properties | database.levels.properties
+        "disableVariableEditing": false, 
+        // level_file.properties | database.levels.properties
+        "useModalFunctionEditor": false, 
+        // level_file.properties | database.levels.properties
+        "useContractEditor": false, 
+        // level_file.properties | database.levels.properties
+        "contractHighlight": false, 
+        // level_file.properties | database.levels.properties
+        "contractCollapse": false, 
+        // level_file.properties | database.levels.properties
+        "examplesHighlight": false, 
+        // level_file.properties | database.levels.properties
+        "examplesCollapse": false, 
+        // level_file.properties | database.levels.properties
+        "examplesRequired": false, 
+        // level_file.properties | database.levels.properties
+        "definitionHighlight": false,
+        //  database.levels
+        "definitionCollapse": false,
+        // level_file.properties | database.levels.properties
+        "disableExamples": false,
+
+        // dashboard/app/models/levels/blockly.rb:276 > level_file.properties.step_mode
+        "step": true,
+        // dashboard/app/models/levels/blockly.rb:277 > level_file.properties.step_mode
+        "stepOnly": false,
+        
+        // level_file.properties.level_num / database.levels.level_num
+        "levelId": "custom",
+
+        // apps/helpers/level-helpers:400 > position > database.script_levels.position
+        "puzzle_number": 3,
+        // apps/helpers/level-helpers:401 > sum_of_database, not necessary
+        "stage_total": 13,
+        // apps/helpers/level-helpers:402 > position == sum_of_database
+        "final_level": false,
+
+        // apps/helpers/level-helpers:281, not necessary
+        "ttsInstructionsUrl": "https://tts.code.org/sharon22k/180/100/cab8028df822480ce1f09ac8e95585ab/2-3 Maze 3.mp3",
+        // apps/helpers/level-helpers:282, not necessary
+        "ttsMarkdownInstructionsUrl": "https://tts.code.org/sharon22k/180/100/d41d8cd98f00b204e9800998ecf8427e/2-3 Maze 3.mp3",
+
+        // apps/helpers/level-helpers:362 > dashboard/app/controllers/script_levels_controller.load_level_source, not necessary
+        "lastAttempt": null,
+        // apps/helpers/level-helpers:368/530, not necessary
+        "submittable": false
+    },
+
+    // apps/helpers/level-helpers:395 > database.script.id?????
+    "scriptId": 18,
+    //  apps/helpers/level-helpers:396 > database.script.name
+    "scriptName": "course2",
+
+    // apps/helpers/level-helpers:409, not necessary
+    "showUnusedBlocks": true,
+    // apps/helpers/level-helpers:285 > dashboard/app/models/script:458, not necessary
+    "textToSpeechEnabled": true,
+    //  dashboard/app/controllers/levels_controller:35 > true, not necessary
+    "fullWidth": true,
+    // dashboard/app/controllers/levels_controller:36 > 186, not necessary
+    "smallFooter": true,
+    // dashboard/app/controllers/levels_controller:37 > dashboard/app/models/game:195, not necessary
+    "hasI18n": true,
+    // apps/helpers/level-helpers:39, not necessary
+    "callouts": [],
+    
+    //GateKeeper > lib/dynamic_config/gatekeeper
+
+    // apps/helpers/level-helpers:168
+    "postMilestone": false,
+    // apps/helpers/level-helpers:170
+    "postFinalMilestone": false,
+    // apps/helpers/level-helpers:176 > dashboard/app/models/puzzle_rating:31, not necessary
+    "puzzleRatingsUrl": "/puzzle_ratings", 
+    // apps/helpers/level-helpers:180 > dashboard/app/models/authored_hint_view_request:63, not necessary
+    "authoredHintViewRequestsUrl": "/authored_hint_view_requests.json", 
+
+    // apps/helpers/level-helpers:139 > database.level.id
+    "serverLevelId": 696, 
+    // apps/helpers/level-helpers:142 > database.script_level.stageid > stage.absolute_position
+    "stagePosition": 3, 
+    // apps/helpers/level-helpers:143 > database.script_level.position
+    "levelPosition": 3, 
+
+    // apps/helpers/level-helpers:173 > ScriptConfig > cookbooks/cdo-varnish/libraries/http_cache:19 CACHED_SCRIPTS_MAP
+    "publicCaching": false, 
+    // apps/helpers/level-helpers:485 > dashboard/app/models/levels/level:443 ???
+    "hasContainedLevels": false, 
+    // apps/helpers/level-helpers:510 > currentUser
+    "isSignedIn": false,
+    // apps/helpers/level-helpers:511 > dashboard/app/models/levels/level:141 > is_a?Blockly
+    "pinWorkspaceToBottom": true,
+    // apps/helpers/level-helpers:512 > dashboard/app/models/levels/level:141 > is_a?Blockly
+    "hasVerticalScrollbars": true,
+    // apps/helpers/level-helpers:513 > dashboard/app/models/levels/level:144 > is_a?Blockly
+    "showExampleTestButtons": true,
+    // apps/helpers/level-helpers:514 > CDO.rack_env
+    "rackEnv": "production",
+
+    // apps/helpers/level-helpers:335
+    "report": {
+        // dashboard/app/controllers/application_controller:148
+        "fallback_response": {
+            "success": {
+                "timestamp": 1501635253198,
+                "script_id": 18,
+                "level_id": 696,
+                // ???
+                "previous_level": "/s/course2/stage/3/puzzle/2",
+                "total_lines": null,
+                "new_level_completed": null,
+                "level_path": "/s/course2/stage/3/puzzle/3",
+                "redirect": "/s/course2/stage/3/puzzle/4",
+                "puzzle_ratings_enabled": true,
+                "activity_id": null
+            },
+            "failure": {
+                "timestamp": 1501635253201,
+                "script_id": 18,
+                "level_id": 696,
+                "previous_level": "/s/course2/stage/3/puzzle/2",
+                "message": "try again",
+                "puzzle_ratings_enabled": true,
+                "activity_id": null
+            }
+        },
+        // dashboard/app/controllers/script_levels_controller:335 ???
+        "callback": "https://studio.code.org/milestone/0/52895/696",
+        // dashboard/app/controllers/script_levels_controller:341
+        "sublevelCallback": null
+    },
+    // apps/helpers/level-helpers:535
+    "sendToPhone": false,
+    // apps/helpers/level-helpers:213 
+    "dialog": {
+        // level_file.properties.level_file
+        "skipSound": false,
+        // file like dashboard/config/scripts/2-3/maze/2_3_maze_match_2.match
+        "preTitle": null, // maybe i18n
+        // same
+        "fallbackResponse": "{\"success\":{\"timestamp\":1501635253198,\"script_id\":18,\"level_id\":696,\"previous_level\":\"/s/course2/stage/3/puzzle/2\",\"total_lines\":null,\"new_level_completed\":null,\"level_path\":\"/s/course2/stage/3/puzzle/3\",\"redirect\":\"/s/course2/stage/3/puzzle/4\",\"puzzle_ratings_enabled\":true,\"activity_id\":null},\"failure\":{\"timestamp\":1501635253201,\"script_id\":18,\"level_id\":696,\"previous_level\":\"/s/course2/stage/3/puzzle/2\",\"message\":\"try again\",\"puzzle_ratings_enabled\":true,\"activity_id\":null}}",
+        "callback": "https://studio.code.org/milestone/0/52895/696",
+        "sublevelCallback": null,
+
+        // database.levels.type.underscore - https://apidock.com/rails/String/underscore
+        "app": "maze",
+        // level_file.properties.level_num / database.level.level_num
+        "level": "custom",
+
+        "shouldShowDialog": true
+    },
+    "locale": "zh_cn"
+}
