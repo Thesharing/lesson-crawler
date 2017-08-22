@@ -5,6 +5,8 @@ import bs4
 import json
 import pymysql
 import uuid
+import sys
+import getopt
 
 TYPE_ID = 1
 
@@ -172,5 +174,34 @@ class Crawler:
             self.browser.quit()
 
 if __name__ == '__main__':
-    crawler = Crawler('https://studio.code.org/s/course2')
+    opt_str = 'Usage: ' + sys.argv[0] + ' <URL(required)> -w <webdriver executable path (optional)> -l <lesson id( optional)>'
+    driver_path = None
+    lesson_id = None
+    if len(sys.argv) <= 1:
+        print(opt_str)
+        exit(1)
+    try:
+        opts, args = getopt.getopt(sys.argv[2:], "hw:l:")
+    except getopt.GetoptError:
+        print(opt_str)
+        exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print(opt_str)
+            exit(0)
+        elif opt == '-w':
+            driver_path = arg
+        elif opt == '-l':
+            lesson_id = arg
+    if driver_path is not None:
+        if lesson_id is not None:
+            crawler = Crawler(url=sys.argv[1], webdriver_local_path=driver_path, lesson_id=lesson_id)
+        else:
+            crawler = Crawler(url=sys.argv[1], webdriver_local_path=driver_path)
+    elif lesson_id is not None:
+        crawler = Crawler(url=sys.argv[1], lesson_id=lesson_id)
+    else:
+        crawler = Crawler(url=sys.argv[1])
+    print(sys.argv[1], driver_path, lesson_id)
+    exit()
     crawler.run()

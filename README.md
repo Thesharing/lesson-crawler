@@ -1,12 +1,18 @@
 # Lesson Crawler
 
-## Code.org
+### Python Env
 
-### Source
+Python 3
+
+You could install Anaconda 3 from [Download Anaconda Now! | Continuum](https://www.continuum.io/downloads) with most common libraries, or install python from [python offical website](https://www.python.org/downloads/)
+
+### Code.org
+
+#### Source
 
 [Code.org Courses](https://studio.code.org/courses) in Simplified Chinese Version
 
-### Database
+#### Database
 
 ``` sql
 
@@ -87,19 +93,17 @@ CREATE TABLE `level_code_org` (
 
 ```
 
-### ChromeDriver
+#### ChromeDriver
 
-Download from [ChromeDriver - WebDriver for Chrome](https://sites.google.com/a/chromium.org/chromedriver/)
+Download from [ChromeDriver - WebDriver for Chrome](https://sites.google.com/a/chromium.org/chromedriver/).
 
-Put it into the source code folder, or specify the path of it in the parameters
+For **windows**: put it into the source code folder, or specify the path of it in the parameters.
 
-### Python Env
+For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.).
 
-Python 3
+### Free Code Camp
 
-## Code Camp
-
-### Source
+#### Source
 
 [Github: freeCodeCamp/freeCodeCamp/Seed/Challenge](https://github.com/freeCodeCamp/freeCodeCamp/tree/staging/seed/challenges)
 

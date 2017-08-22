@@ -4,6 +4,7 @@ import json
 import pymysql
 import uuid
 import os
+import sys
 
 TYPE_ID = 2
 
@@ -93,5 +94,8 @@ class Crawler:
         self.sql_connection.close()
 
 if __name__ == '__main__':
-    crawler = Crawler('C:/Users/t-zhhong/Github/freeCodeCamp/seed/challenges')
+    if len(sys.argv) <= 1:
+        print('Usage: ' + sys.argv[0] + ' <local json folder path(required)>')
+        exit(1)
+    crawler = Crawler(sys.argv[1])
     crawler.run()
