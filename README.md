@@ -6,6 +6,8 @@ Python 3
 
 You could install Anaconda 3 from [Download Anaconda Now! | Continuum](https://www.continuum.io/downloads) with most common libraries, or install python from [python offical website](https://www.python.org/downloads/)
 
+Run `pip install -r requirements.txt` before run the scripts.
+
 ### Code.org
 
 #### Source
@@ -99,7 +101,7 @@ Download from [ChromeDriver - WebDriver for Chrome](https://sites.google.com/a/c
 
 For **windows**: put it into the source code folder, or specify the path of it in the parameters.
 
-For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.).
+For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.). (Not runnable sometimes, please run the script under windows and dump the sql with mysqldump)
 
 ### Free Code Camp
 
