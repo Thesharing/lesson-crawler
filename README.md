@@ -2,6 +2,10 @@
 
 ## Code.org
 
+### Source
+
+[Code.org Courses](https://studio.code.org/courses) in Simplified Chinese Version
+
 ### Database
 
 ``` sql
@@ -89,6 +93,14 @@ Download from [ChromeDriver - WebDriver for Chrome](https://sites.google.com/a/c
 
 Put it into the source code folder, or specify the path of it in the parameters
 
-### Python
+### Python Env
 
 Python 3
+
+## Code Camp
+
+### Source
+
+[Github: freeCodeCamp/freeCodeCamp/Seed/Challenge](https://github.com/freeCodeCamp/freeCodeCamp/tree/staging/seed/challenges)
+
+**ATTENTION**: You need to delete `./07-contribute-to-open-source-and-help-nonprofits/` and replace '_id' to 'id' in `./08-coding-interview-questions-and-take-home-assignments/project-euler-problems.json`

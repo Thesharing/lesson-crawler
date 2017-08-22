@@ -6,14 +6,16 @@ import json
 import pymysql
 import uuid
 
+TYPE_ID = 1
+
 
 class Crawler:
 
     stage_id = ""
     sub_stage_id = ""
-    lesson_stage_id = 1
-    stage_sub_stage_id = 1
-    stage_level_id = 0
+    lesson_stage_order = 1
+    stage_sub_stage_order = 1
+    stage_level_order = 0
 
     crawl_success = False
 
@@ -53,29 +55,29 @@ class Crawler:
                 a_list = td.find_all('a')
                 for a in a_list:
                     if a.text == '线下的活动':
-                        if self.stage_sub_stage_id > 1:
+                        if self.stage_sub_stage_order > 1:
                             self.store_stage()
-                            self.lesson_stage_id += 1
-                            self.stage_sub_stage_id = 1
+                            self.lesson_stage_order += 1
+                            self.stage_sub_stage_order = 1
                         self.stage_id = self.generate_uuid('stage', 'id')
                         continue
                     title_text, data_option, script_src = self.crawl_page(a.attrs['href'])
                     if data_option is not None:
-                        self.stage_level_id += 1
-                        print("Stage:", self.lesson_stage_id, "Sub Stage:", self.stage_sub_stage_id,
-                              "Level:", self.stage_level_id, "Link: ", a.attrs['href'],
+                        self.stage_level_order += 1
+                        print("Stage:", self.lesson_stage_order, "Sub Stage:", self.stage_sub_stage_order,
+                              "Level:", self.stage_level_order, "Link: ", a.attrs['href'],
                               "Title: ", title_text, "Length: ", len(data_option))
                         self.store_level(title_text, script_src, data_option)
-                if self.stage_level_id > 0:
+                if self.stage_level_order > 0:
                     self.store_sub_stage()
-                    self.stage_sub_stage_id += 1
-                    self.stage_level_id = 0
+                    self.stage_sub_stage_order += 1
+                    self.stage_level_order = 0
                 self.sub_stage_id = self.generate_uuid('stage', 'id')
-        if self.stage_sub_stage_id > 1:
+        if self.stage_sub_stage_order > 1:
             self.store_stage()
             self.stage_id = self.generate_uuid('stage', 'id')
-            self.lesson_stage_id += 1
-            self.stage_sub_stage_id = 1
+            self.lesson_stage_order += 1
+            self.stage_sub_stage_order = 1
 
     def crawl_page(self, href):
         data_option = None
@@ -126,21 +128,21 @@ class Crawler:
               "`level_type`, `script_src`) VALUES (" + "%s, " * (len(self.level_key_list) - 1) + "%s)"
         self.insert_into_database(sql, tuple(sql_data))
         sql = "INSERT INTO `level` (`id`, `level_name`, `level_url`, `type_id`) VALUES (%s, %s, %s, %s)"
-        self.insert_into_database(sql, (level_data['id'], title_text, level_data['level_url'], 1))
-        sql = "INSERT INTO `stage_level` (`stage_id`, `stage_level_id`, `level_id`) VALUES (%s, %s, %s)"
-        self.insert_into_database(sql, (self.sub_stage_id, self.stage_level_id, level_data['id']))
+        self.insert_into_database(sql, (level_data['id'], title_text, level_data['level_url'], TYPE_ID))
+        sql = "INSERT INTO `stage_level` (`stage_id`, `stage_level_order`, `level_id`) VALUES (%s, %s, %s)"
+        self.insert_into_database(sql, (self.sub_stage_id, self.stage_level_order, level_data['id']))
 
     def store_sub_stage(self):
         sql = "INSERT INTO `stage` (`id`, `stage_name`) VALUES (%s, %s)"
-        self.insert_into_database(sql, (self.sub_stage_id, '子关卡 ' + str(self.stage_sub_stage_id)))
-        sql = "INSERT INTO `stage_sub_stage` (`stage_id`, `stage_sub_stage_id`, `sub_stage_id`) VALUES (%s, %s, %s)"
-        self.insert_into_database(sql, (self.stage_id, self.stage_sub_stage_id, self.sub_stage_id))
+        self.insert_into_database(sql, (self.sub_stage_id, '子关卡 ' + str(self.stage_sub_stage_order)))
+        sql = "INSERT INTO `stage_sub_stage` (`stage_id`, `stage_substage_order`, `sub_stage_id`) VALUES (%s, %s, %s)"
+        self.insert_into_database(sql, (self.stage_id, self.stage_sub_stage_order, self.sub_stage_id))
 
     def store_stage(self):
         sql = "INSERT INTO `stage` (`id`, `stage_name`) VALUES (%s, %s)"
-        self.insert_into_database(sql, (self.stage_id, '关卡 ' + str(self.lesson_stage_id)))
-        sql = "INSERT INTO `lesson_stage` (`lesson_id`, `lesson_stage_id`, `stage_id`) VALUES (%s, %s, %s)"
-        self.insert_into_database(sql, (self.lesson_id, self.lesson_stage_id, self.stage_id))
+        self.insert_into_database(sql, (self.stage_id, '关卡 ' + str(self.lesson_stage_order)))
+        sql = "INSERT INTO `lesson_stage` (`lesson_id`, `lesson_stage_order`, `stage_id`) VALUES (%s, %s, %s)"
+        self.insert_into_database(sql, (self.lesson_id, self.lesson_stage_order, self.stage_id))
 
     def insert_into_database(self, sql: str, data: tuple):
         with self.sql_connection.cursor() as cursor:
