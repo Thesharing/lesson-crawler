@@ -33,9 +33,10 @@ class Crawler:
                       'has_contained_levels', 'skip_sound', 'skip_level', 'skip_dialog', 'pre_title',
                       'level_type', 'script_src']
 
-    def __init__(self, url: str, webdriver_local_path: str = None, lesson_id: str = str(uuid.uuid1())):
+    def __init__(self, url: str, lesson_name: str = "Lesson", webdriver_local_path: str = None):
         self.url = url
-        self.lesson_id = lesson_id
+        self.lesson_id = str(uuid.uuid1())
+        self.lesson_name = lesson_name
         self.browser = webdriver.Chrome(webdriver_local_path) if webdriver_local_path is not None else webdriver.Chrome()
         self.sql_connection = pymysql.connect(host='localhost',
                                               user='root',
@@ -223,6 +224,9 @@ class Crawler:
         sql = "INSERT INTO `lesson_stage` (`lesson_id`, `lesson_stage_order`, `stage_id`) VALUES (%s, %s, %s)"
         self.insert_into_database(sql, (self.lesson_id, self.lesson_stage_order, self.stage_id))
 
+    def store_lesson(self):
+        sql = "INSERT INTO `lesson` (`id`, `name`, `typeId`)"
+
     def insert_into_database(self, sql: str, data: tuple):
         with self.sql_connection.cursor() as cursor:
             cursor.execute(sql, data)
@@ -252,37 +256,38 @@ class Crawler:
 
     def __del__(self):
         if not self.crawl_success:
-            self.sql_connection.close()
-            self.browser.close()
-            self.browser.quit()
+            if self.sql_connection:
+                self.sql_connection.close()
+            if self.browser:
+                self.browser.close()
+                self.browser.quit()
 
 if __name__ == '__main__':
-    opt_str = 'Usage: ' + sys.argv[0] + ' <URL(required)> -w <webdriver executable path (optional)> -l <lesson id( optional)>'
+    opt_str = 'Usage: ' + sys.argv[0] + ' <URL (required)> <Lesson Name (required)> -w <Webdriver Path (optional)>'
     driver_path = None
     lesson_id = None
-    if len(sys.argv) <= 1:
+    if len(sys.argv) <= 2:
         print(opt_str)
         exit(1)
-    try:
-        opts, args = getopt.getopt(sys.argv[2:], "hw:l:")
-    except getopt.GetoptError:
-        print(opt_str)
-        exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
+    if len(sys.argv) >= 3:
+        opts = None
+        try:
+            opts, args = getopt.getopt(sys.argv[3:], "hw:")
+        except getopt.GetoptError:
             print(opt_str)
-            exit(0)
-        elif opt == '-w':
-            driver_path = arg
-        elif opt == '-l':
-            lesson_id = arg
-    if driver_path is not None:
-        if lesson_id is not None:
-            crawler = Crawler(url=sys.argv[1], webdriver_local_path=driver_path, lesson_id=lesson_id)
+            exit(2)
+        for opt, arg in opts:
+            if opt == '-h':
+                print(opt_str)
+                exit(0)
+            elif opt == '-w':
+                driver_path = arg
+        if driver_path is not None:
+            crawler = Crawler(url=sys.argv[1], lesson_name=sys.argv[2], webdriver_local_path=driver_path)
         else:
-            crawler = Crawler(url=sys.argv[1], webdriver_local_path=driver_path)
-    elif lesson_id is not None:
-        crawler = Crawler(url=sys.argv[1], lesson_id=lesson_id)
+            crawler = Crawler(url=sys.argv[1], lesson_name=sys.argv[2])
     else:
-        crawler = Crawler(url=sys.argv[1])
+        crawler = Crawler(url=sys.argv[1], lesson_name=sys.argv[2])
+    print(sys.argv[1], sys.argv[2], driver_path)
+    exit(2)
     crawler.run()
