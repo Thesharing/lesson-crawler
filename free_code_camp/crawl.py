@@ -45,16 +45,16 @@ class Crawler:
             if not os.path.isfile(lesson_path):
                 stage_list = os.listdir(lesson_path)
                 for stage in stage_list:
-                    self.stage_id = str(uuid.uuid1())
-                    sql = "INSERT INTO stage (id, stage_name) VALUES (%s, %s)"
-                    self.insert_into_database(sql, (self.stage_id, stage[:-len('.json')].replace('-', ' ').title()))
-                    self.lesson_stage_id += 1
-                    sql = "INSERT INTO lesson_stage (lesson_id, lesson_stage_order, stage_id) VALUES (%s, %s, %s)"
-                    self.insert_into_database(sql, (self.lesson_id, self.lesson_stage_id, self.stage_id))
-                    sql = "INSERT INTO stage_sub_stage (stage_id, stage_substage_order, sub_stage_id) VALUES (%s, %s, %s)"
-                    self.insert_into_database(sql, (self.stage_id, 1, self.stage_id))
                     stage_path = os.path.join(lesson_path, stage)
                     if stage_path[-len('.json'):] == '.json':
+                        self.stage_id = str(uuid.uuid1())
+                        sql = "INSERT INTO stage (id, stage_name) VALUES (%s, %s)"
+                        self.insert_into_database(sql, (self.stage_id, stage[:-len('.json')].replace('-', ' ').title()))
+                        self.lesson_stage_id += 1
+                        sql = "INSERT INTO lesson_stage (lesson_id, lesson_stage_order, stage_id) VALUES (%s, %s, %s)"
+                        self.insert_into_database(sql, (self.lesson_id, self.lesson_stage_id, self.stage_id))
+                        sql = "INSERT INTO stage_sub_stage (stage_id, stage_substage_order, sub_stage_id) VALUES (%s, %s, %s)"
+                        self.insert_into_database(sql, (self.stage_id, 1, self.stage_id))
                         with open(stage_path, 'r', encoding="utf8") as stage_file:
                             print(stage_path)
                             data_str = stage_file.read()
