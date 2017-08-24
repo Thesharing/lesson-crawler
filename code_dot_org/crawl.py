@@ -7,8 +7,15 @@ import pymysql
 import uuid
 import sys
 import getopt
+from enum import Enum
 
-TYPE_ID = 1
+
+class LevelType (Enum):
+    NONE = 0
+    CODE_ORG = 1
+    CODE_CAMP = 2
+    QUIZ = 3
+    VIDEO = 4
 
 
 class Crawler:
@@ -63,13 +70,18 @@ class Crawler:
                             self.stage_sub_stage_order = 1
                         self.stage_id = self.generate_uuid('stage', 'id')
                         continue
-                    title_text, data_option, script_src = self.crawl_page(a.attrs['href'])
-                    if data_option is not None:
+                    title_text, data_option, script_src, level_type = self.crawl_page(a.attrs['href'])
+                    if level_type is LevelType.CODE_ORG:
                         self.stage_level_order += 1
-                        print("Stage:", self.lesson_stage_order, "Sub Stage:", self.stage_sub_stage_order,
+                        print("CODE.ORG Stage:", self.lesson_stage_order, "Sub Stage:", self.stage_sub_stage_order,
                               "Level:", self.stage_level_order, "Link: ", a.attrs['href'],
                               "Title: ", title_text, "Length: ", len(data_option))
-                        self.store_level(title_text, script_src, data_option)
+                        self.store_code_org_level(title_text, script_src, data_option)
+                    elif level_type is LevelType.QUIZ:
+                        if self.store_quiz_level(title_text, data_option):
+                            print("QUIZ Stage:", self.lesson_stage_order, "Sub Stage:", self.stage_sub_stage_order,
+                                  "Level:", self.stage_level_order, "Link: ", a.attrs['href'],
+                                  "Title: ", title_text)
                 if self.stage_level_order > 0:
                     self.store_sub_stage()
                     self.stage_sub_stage_order += 1
@@ -84,6 +96,7 @@ class Crawler:
     def crawl_page(self, href):
         data_option = None
         script_src = None
+        level_type = LevelType.NONE
         self.browser.get(href)
         page = self.browser.page_source
         soup = bs4.BeautifulSoup(page, 'lxml')
@@ -97,9 +110,15 @@ class Crawler:
                 if 'src' in i.attrs:
                     script_src = i.attrs['src']
                     script_src = script_src[: script_src.find('.min-')] + '.js'
-        return title_text, data_option, script_src
+                    level_type = LevelType.CODE_ORG
+        if level_type is not LevelType.CODE_ORG:
+            for i in script_list:
+                if 'appOptions' in i.text:
+                    data_option = i.text[i.text.find('{"level":'):i.text.find('};') + 1]
+                    level_type = LevelType.QUIZ
+        return title_text, data_option, script_src, level_type
 
-    def store_level(self, title_text, script_src, data_option):
+    def store_code_org_level(self, title_text, script_src, data_option):
         data = json.loads(data_option)
         level_data = {'id': self.generate_uuid('level', 'id'),
                       'level_name': title_text,
@@ -130,9 +149,67 @@ class Crawler:
               "`level_type`, `script_src`) VALUES (" + "%s, " * (len(self.level_key_list) - 1) + "%s)"
         self.insert_into_database(sql, tuple(sql_data))
         sql = "INSERT INTO `level` (`id`, `level_name`, `level_url`, `type_id`) VALUES (%s, %s, %s, %s)"
-        self.insert_into_database(sql, (level_data['id'], title_text, level_data['level_url'], TYPE_ID))
+        self.insert_into_database(sql, (level_data['id'], title_text, level_data['level_url'], LevelType.CODE_ORG.value))
         sql = "INSERT INTO `stage_level` (`stage_id`, `stage_level_order`, `level_id`) VALUES (%s, %s, %s)"
         self.insert_into_database(sql, (self.sub_stage_id, self.stage_level_order, level_data['id']))
+
+    def store_quiz_level(self, title_text, data_option):
+        try:
+            data = json.loads(data_option)
+        except json.JSONDecodeError:
+            print("JSON ERROR: " + data_option)
+            return False
+        questions = []
+        answers = []
+        app = None
+        content = ''
+        if 'dialog' in data:
+            if 'app' in data['dialog']:
+                app = data['dialog']['app']
+        if app != 'multi':
+            return False
+        if 'level' in data:
+            if 'questions' in data['level']:
+                q = data['level']['questions']
+                for i in q:
+                    if 'text' in i:
+                        text = i['text']
+                        if text[-len('.png'):] == '.png' or text[-len('.jpg')] == '.jpg':
+                            questions.append(self.generate_html(text))
+                        else:
+                            questions.append(self.generate_html(text))
+            if 'answers' in data['level']:
+                a = data['level']['answers']
+                for i in a:
+                    if 'text' in i:
+                        if i['text'][-len('.png'):] == '.png' or i['text'][-len('.jpg')] == '.jpg':
+                            i['text'] = self.generate_html(i['text'])
+                        else:
+                            i['text'] = self.generate_html(i['text'])
+                    answers.append(i)
+            i = 1
+            while True:
+                if 'content' + str(i) in data['level']:
+                    content += self.generate_html(data['level']['content' + str(i)].strip(', 500'))
+                    i += 1
+                else:
+                    break
+
+        self.stage_level_order += 1
+        question_id = self.generate_uuid('question', 'id')
+        sql = "INSERT INTO `question` (`id`, `questions`, `answers`, `title`, `content`, `app`) VALUES" \
+              " (%s, %s, %s, %s, %s, %s)"
+        self.insert_into_database(sql, (question_id, json.dumps(questions), json.dumps(answers), title_text, content, app))
+        level_id = self.generate_uuid('level', 'id')
+        sql = "INSERT INTO `level_quiz` (`id`, `level_name`) VALUES (%s, %s)"
+        self.insert_into_database(sql, (level_id, title_text))
+        sql = "INSERT INTO `quiz_question` (`quiz_id`, `question_id`, `order`) VALUES (%s, %s, %s)"
+        self.insert_into_database(sql, (level_id, question_id, 0))
+        sql = "INSERT INTO `level` (`id`, `level_name`, `level_url`, `type_id`) VALUES (%s, %s, %s, %s)"
+        self.insert_into_database(sql, (level_id, title_text, "/", LevelType.QUIZ.value))
+        sql = "INSERT INTO `stage_level` (`stage_id`, `stage_level_order`, `level_id`) VALUES (%s, %s, %s)"
+        self.insert_into_database(sql, (self.sub_stage_id, self.stage_level_order, level_id))
+        return True
 
     def store_sub_stage(self):
         sql = "INSERT INTO `stage` (`id`, `stage_name`) VALUES (%s, %s)"
@@ -157,6 +234,12 @@ class Crawler:
             while cursor.execute(sql, u) > 0:
                 u = str(uuid.uuid1())
         return u
+
+    def generate_html(self, text):
+        if text[-len('.png'):] == '.png' or text[-len('.jpg')] == '.jpg':
+            return '<img src = \'' + text + '\'></img>'
+        else:
+            return '<p>' + text + '</p>'
 
     def finish(self):
         if self.crawl_success:
@@ -202,6 +285,4 @@ if __name__ == '__main__':
         crawler = Crawler(url=sys.argv[1], lesson_id=lesson_id)
     else:
         crawler = Crawler(url=sys.argv[1])
-    print(sys.argv[1], driver_path, lesson_id)
-    exit()
     crawler.run()
