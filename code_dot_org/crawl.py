@@ -10,7 +10,7 @@ import getopt
 from enum import Enum
 
 
-class LevelType (Enum):
+class LevelType(Enum):
     NONE = 0
     CODE_ORG = 1
     CODE_CAMP = 2
@@ -18,8 +18,13 @@ class LevelType (Enum):
     VIDEO = 4
 
 
-class Crawler:
+class LessonType(Enum):
+    NONE = 0
+    CODE_ORG = 1
+    CODE_CAMP = 2
 
+
+class Crawler:
     stage_id = ""
     sub_stage_id = ""
     lesson_stage_order = 1
@@ -37,7 +42,8 @@ class Crawler:
         self.url = url
         self.lesson_id = str(uuid.uuid1())
         self.lesson_name = lesson_name
-        self.browser = webdriver.Chrome(webdriver_local_path) if webdriver_local_path is not None else webdriver.Chrome()
+        self.browser = webdriver.Chrome(
+            webdriver_local_path) if webdriver_local_path is not None else webdriver.Chrome()
         self.sql_connection = pymysql.connect(host='localhost',
                                               user='root',
                                               password='wangtian',
@@ -58,6 +64,7 @@ class Crawler:
         page = self.browser.page_source
         soup = bs4.BeautifulSoup(page, 'lxml')
         table = soup.find('table')
+        self.store_lesson()
         for idx, tr in enumerate(table.find_all('tr')):
             if idx != 0:
                 td_list = tr.find_all('td')
@@ -134,10 +141,13 @@ class Crawler:
                       'stage_position': data['stagePosition'] if 'stagePosition' in data else None,
                       'level_position': data['levelPosition'] if 'levelPosition' in data else None,
                       'has_contained_levels': data['hasContainedLevels'] if 'hasContainedLevels' in data else False,
-                      'skip_sound': data['dialog']['skipSound'] if 'dialog' in data and 'skipSound' in data['dialog'] else False,
+                      'skip_sound': data['dialog']['skipSound'] if 'dialog' in data and 'skipSound' in data[
+                          'dialog'] else False,
                       'skip_level': False,
-                      'skip_dialog': not data['dialog']['shouldShowDialog'] if 'dialog' in data and 'shouldShowDialog' in data['dialog'] else True,
-                      'pre_title': data['dialog']['preTitle'] if 'dialog' in data and 'preTitle' in data['dialog'] else None,
+                      'skip_dialog': not data['dialog'][
+                          'shouldShowDialog'] if 'dialog' in data and 'shouldShowDialog' in data['dialog'] else True,
+                      'pre_title': data['dialog']['preTitle'] if 'dialog' in data and 'preTitle' in data[
+                          'dialog'] else None,
                       'level_type': data['dialog']['app'] if 'dialog' in data and 'app' in data['dialog'] else None,
                       'script_src': script_src
                       }
@@ -146,11 +156,12 @@ class Crawler:
             sql_data.append(level_data[key])
         sql = "INSERT INTO `level_code_org` (`id`, `level_name`, `level_url`, `game_name`, `skin_name`, `base_url`, " \
               "`app_name`,`level_properties`, `script_id`, `script_name`, `stage_position`, `level_position`," + \
-              "`has_contained_levels`, `skip_sound`, `skip_level`, `skip_dialog`, `pre_title`," +\
+              "`has_contained_levels`, `skip_sound`, `skip_level`, `skip_dialog`, `pre_title`," + \
               "`level_type`, `script_src`) VALUES (" + "%s, " * (len(self.level_key_list) - 1) + "%s)"
         self.insert_into_database(sql, tuple(sql_data))
         sql = "INSERT INTO `level` (`id`, `level_name`, `level_url`, `type_id`) VALUES (%s, %s, %s, %s)"
-        self.insert_into_database(sql, (level_data['id'], title_text, level_data['level_url'], LevelType.CODE_ORG.value))
+        self.insert_into_database(sql,
+                                  (level_data['id'], title_text, level_data['level_url'], LevelType.CODE_ORG.value))
         sql = "INSERT INTO `stage_level` (`stage_id`, `stage_level_order`, `level_id`) VALUES (%s, %s, %s)"
         self.insert_into_database(sql, (self.sub_stage_id, self.stage_level_order, level_data['id']))
 
@@ -175,18 +186,12 @@ class Crawler:
                 for i in q:
                     if 'text' in i:
                         text = i['text']
-                        if text[-len('.png'):] == '.png' or text[-len('.jpg')] == '.jpg':
-                            questions.append(self.generate_html(text))
-                        else:
-                            questions.append(self.generate_html(text))
+                        questions.append(self.generate_html(text))
             if 'answers' in data['level']:
                 a = data['level']['answers']
                 for i in a:
                     if 'text' in i:
-                        if i['text'][-len('.png'):] == '.png' or i['text'][-len('.jpg')] == '.jpg':
-                            i['text'] = self.generate_html(i['text'])
-                        else:
-                            i['text'] = self.generate_html(i['text'])
+                        i['text'] = self.generate_html(i['text'])
                     answers.append(i)
             i = 1
             while True:
@@ -200,7 +205,8 @@ class Crawler:
         question_id = self.generate_uuid('question', 'id')
         sql = "INSERT INTO `question` (`id`, `questions`, `answers`, `title`, `content`, `app`) VALUES" \
               " (%s, %s, %s, %s, %s, %s)"
-        self.insert_into_database(sql, (question_id, json.dumps(questions), json.dumps(answers), title_text, content, app))
+        self.insert_into_database(sql,
+                                  (question_id, json.dumps(questions), json.dumps(answers), title_text, content, app))
         level_id = self.generate_uuid('level', 'id')
         sql = "INSERT INTO `level_quiz` (`id`, `level_name`) VALUES (%s, %s)"
         self.insert_into_database(sql, (level_id, title_text))
@@ -225,7 +231,8 @@ class Crawler:
         self.insert_into_database(sql, (self.lesson_id, self.lesson_stage_order, self.stage_id))
 
     def store_lesson(self):
-        sql = "INSERT INTO `lesson` (`id`, `name`, `typeId`)"
+        sql = "INSERT INTO `lesson` (`id`, `name`, `typeId`) VALUES (%s, %s, %s)"
+        self.insert_into_database(sql, (self.lesson_id, self.lesson_name, LessonType.CODE_ORG.value))
 
     def insert_into_database(self, sql: str, data: tuple):
         with self.sql_connection.cursor() as cursor:
@@ -240,10 +247,11 @@ class Crawler:
         return u
 
     def generate_html(self, text):
-        if text[-len('.png'):] == '.png' or text[-len('.jpg')] == '.jpg':
-            return '<img src = \'' + text + '\'></img>'
-        else:
-            return '<p>' + text + '</p>'
+        if len(text) >= 5:
+            pos_png = text.find('.png')
+            if pos_png >= 0:
+                return '<img src=\'' + text[:pos_png + 4].replace('script_assets', 'assets/media/stemweb/lessons/code_org') + '\'></img>'
+        return '<p>' + text + '</p>'
 
     def finish(self):
         if self.crawl_success:
@@ -261,6 +269,7 @@ class Crawler:
             if self.browser:
                 self.browser.close()
                 self.browser.quit()
+
 
 if __name__ == '__main__':
     opt_str = 'Usage: ' + sys.argv[0] + ' <URL (required)> <Lesson Name (required)> -w <Webdriver Path (optional)>'
@@ -288,6 +297,4 @@ if __name__ == '__main__':
             crawler = Crawler(url=sys.argv[1], lesson_name=sys.argv[2])
     else:
         crawler = Crawler(url=sys.argv[1], lesson_name=sys.argv[2])
-    print(sys.argv[1], sys.argv[2], driver_path)
-    exit(2)
     crawler.run()

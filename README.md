@@ -93,6 +93,29 @@ CREATE TABLE `level_code_org` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `level_quiz` (
+  `id` varchar(255) NOT NULL,
+  `level_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `quiz_question` (
+  `quiz_id` varchar(255) NOT NULL,
+  `question_id` varchar(255) NOT NULL,
+  `order` int(11) NOT NULL,
+  PRIMARY KEY (`quiz_id`,`question_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `question` (
+  `id` varchar(255) NOT NULL,
+  `questions` text,
+  `answers` text,
+  `title` varchar(255) DEFAULT NULL,
+  `content` text,
+  `app` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 ```
 
 #### ChromeDriver
@@ -101,7 +124,7 @@ Download from [ChromeDriver - WebDriver for Chrome](https://sites.google.com/a/c
 
 For **windows**: put it into the source code folder, or specify the path of it in the parameters.
 
-For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.). (Not runnable sometimes, please run the script under windows and dump the sql with mysqldump)
+For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.). (Not available sometimes, please run the script under windows and dump the sql with [mysqldump](https://dev.mysql.com/doc/refman/5.5/en/mysqldump.html))
 
 ### Free Code Camp
 
@@ -109,4 +132,4 @@ For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.). (Not runnable
 
 [Github: freeCodeCamp/freeCodeCamp/Seed/Challenge](https://github.com/freeCodeCamp/freeCodeCamp/tree/staging/seed/challenges)
 
-**ATTENTION**: You need to delete `./07-contribute-to-open-source-and-help-nonprofits/` and replace '_id' to 'id' in `./08-coding-interview-questions-and-take-home-assignments/project-euler-problems.json`
+**ATTENTION**: You need to delete the folder `./07-contribute-to-open-source-and-help-nonprofits/` and replace '_id' to 'id' in the file `./08-coding-interview-questions-and-take-home-assignments/project-euler-problems.json`
