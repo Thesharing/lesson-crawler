@@ -16,6 +16,8 @@ Run `pip install -r requirements.txt` before run the scripts.
 
 #### Database
 
+Change the host, username, password, database and table in the *code*.
+
 ``` sql
 
 CREATE DATABASE `stemweb` /*!40100 DEFAULT CHARACTER SET utf8 */;
@@ -133,3 +135,17 @@ For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.). (Not availabl
 [Github: freeCodeCamp/freeCodeCamp/Seed/Challenge](https://github.com/freeCodeCamp/freeCodeCamp/tree/staging/seed/challenges)
 
 **ATTENTION**: You need to delete the folder `./07-contribute-to-open-source-and-help-nonprofits/` and replace '_id' to 'id' in the file `./08-coding-interview-questions-and-take-home-assignments/project-euler-problems.json`
+
+### Hour of Code
+
+#### Source
+
+[Hour of Code Apps](https://code.org/hourofcode/overview)
+
+#### Usage
+
+```shell
+python crawl.py \<First Level URL\> \<Level Total Count\> \<Lesson Name\>
+```
+
+URL Example: studio.code.org/s/frozen/stage/**{stage}**/puzzle/**{level}**
