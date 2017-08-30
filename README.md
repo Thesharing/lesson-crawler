@@ -145,7 +145,7 @@ For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.). (Not availabl
 #### Usage
 
 ```shell
-python crawl.py <First Level URL\> <Level Total Count> <Lesson Name>
+python crawl.py <First Level URL> <Level Total Count> <Lesson Name>
 ```
 
 URL Example: studio.code.org/s/frozen/stage/**{stage}**/puzzle/**{level}**
