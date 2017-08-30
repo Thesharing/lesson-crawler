@@ -10,9 +10,17 @@ Run `pip install -r requirements.txt` before run the scripts.
 
 ### Code.org
 
+#### Usage
+
+```shell
+python crawl.py <Lesson URL (required)> <Lesson Name (required)> -w <Webdriver Path (optional)>
+```
+
+URL example: studio.code.org/s/course1
+
 #### Source
 
-[Code.org Courses](https://studio.code.org/courses) in Simplified Chinese Version
+[Code.org Courses](https://studio.code.org/courses) in **simplified chinese** version
 
 #### Database
 
@@ -20,7 +28,7 @@ Change the host, username, password, database and table in the *code*.
 
 ``` sql
 
-CREATE DATABASE `stemweb` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE `stemweb`;
 
 CREATE TABLE `lesson` (
   `id` varchar(100) NOT NULL,
@@ -130,6 +138,14 @@ For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.). (Not availabl
 
 ### Free Code Camp
 
+#### Usage
+
+```shell
+python crawl.py <local json folder path(required)>
+```
+
+Folder path example: `github/freeCodeCamp/seed/challenges`
+
 #### Source
 
 [Github: freeCodeCamp/freeCodeCamp/Seed/Challenge](https://github.com/freeCodeCamp/freeCodeCamp/tree/staging/seed/challenges)
@@ -138,14 +154,17 @@ For **mac OS**: put it into any folder in PATH (`/usr/bin`, etc.). (Not availabl
 
 ### Hour of Code
 
-#### Source
-
-[Hour of Code Apps](https://code.org/hourofcode/overview)
-
 #### Usage
 
 ```shell
 python crawl.py <First Level URL> <Level Total Count> <Lesson Name>
 ```
 
-URL Example: studio.code.org/s/frozen/stage/**{stage}**/puzzle/**{level}**
+URL example: studio.code.org/s/frozen/stage/**{stage}**/puzzle/**{level}**
+
+Prerequisite: same as code.org
+
+#### Source
+
+[Hour of Code Apps](https://code.org/hourofcode/overview)
+
